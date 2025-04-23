@@ -10,7 +10,7 @@ The GDS file is imported as a bitmap, while the waveguide height is defined with
 - `examples/meep_calculation1.py`: A full 3D simulation of a bent silicon waveguide defined from a GDS file, with MaterialGrid.
 - `Bend_waveguide2.gds`: Corresponding layout file used in the example.
 
-- `examples/meep_calculation3.py`: examples/meep_calculation3.py: A full 3D simulation of a straight silicon waveguide defined from a GDS file, with MaterialGrid. This script places flux monitors at the input and output sides of the 　　waveguide, and computes the transmission spectrum over the wavelength range from 1.5 to 1.6 µm.
+- `examples/meep_calculation3.py`:A full 3D simulation of a straight silicon waveguide defined from a GDS file, with MaterialGrid. This script places flux monitors at the input and output sides of the 　　waveguide, and computes the transmission spectrum over the wavelength range from 1.5 to 1.6 µm.
 - `straight_waveguide2.gds`: Corresponding layout file used in the example.
 
 ## ▶️ How to Run
