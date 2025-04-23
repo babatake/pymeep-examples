@@ -2,6 +2,10 @@
 
 This example demonstrates how to simulate a straight silicon waveguide using Meep and a GDSII layout.
 
+This simulation script places a continuous wave (CW) source on one of two silicon waveguides drawn in the GDS file, and performs a wave propagation simulation.  
+The GDS file is imported as a bitmap, while the waveguide height is defined within the script.
+
+
 ## 📂 Files
 
 | File | Description |
@@ -17,3 +21,4 @@ Install required Python packages:
 pip install meep gdstk shapely matplotlib
 
 python meep_calculation1.py
+
