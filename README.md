@@ -6,7 +6,7 @@ pyMeep simulation examples for photonic circuits from GDSII layout files
 This repository contains example simulations using [Meep](https://github.com/probstj/pymeep) — a free FDTD simulation software for modeling electromagnetic systems.
 
 ## 📁 Contents
-
+A collection of FDTD simulation examples for optical waveguides
 
 ## 🔧 Requirements
 
