@@ -20,7 +20,7 @@ si = mp.Medium(index=3.48)
 sio2 = mp.Medium(index=1.44)
 
 # --- Read GDS file and merge polygons ---
-gds_file = "Bend_waveguide2.gds"
+gds_file = "straight_waveguide2.gds"
 lib = gdstk.read_gds(gds_file)
 cell = lib.top_level()[0]
 polygons = []
