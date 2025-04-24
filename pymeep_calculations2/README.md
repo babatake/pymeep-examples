@@ -1,4 +1,4 @@
-🧠 Adjoint Optimization of a 2D Waveguide Structure Using Meep and B-Splines
+🧠 Adjoint Optimization of a 3D-waveguide-based directional coupler Structure Using Meep and B-Splines
 
 This repository demonstrates an adjoint-based inverse design framework for optimizing the geometry of a 2D photonic waveguide using Meep, the open-source FDTD simulator. The device geometry is parameterized by B-spline curves, and the forward and adjoint electromagnetic fields are used to compute shape gradients with respect to the structure.
 ✨ Features
