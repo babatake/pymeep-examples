@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    # === パラメータ ===
+    # === Parameters ===
     n = 3.4
     w = 0.5
     h = 0.22
@@ -14,10 +14,10 @@ def main():
     pad = 2.0
     sx = 2 * (r + w + gap + pad + dpml)
     sy = 2 * (r + w + gap + pad + dpml)
-    sz = h + 2 * dpml + 1.0  # z方向にも十分な空間を確保
+    sz = h + 2 * dpml + 1.0  # Ensure enough space in the z-direction
     cell = mp.Vector3(sx, sy, sz)
 
-    # === ジオメトリ設定（z中心はすべて0にする） ===
+    # === Geometry setup (all z-centers are set to 0) ===
     bus_y = 0
     ring_center_y = w + gap + r
     drop_y = 2 * r + 2 * gap + 2 * w
@@ -45,7 +45,7 @@ def main():
         ),
     ]
 
-    # === 光源設定 ===
+    # === Source settings ===
     fcen = 0.64
     df = 0.1
     nfreq = 50
@@ -58,11 +58,11 @@ def main():
         eig_parity=mp.ODD_Z,
     )]
 
-    # === モニター位置（z=0中心） ===
+    # === Monitor locations (centered at z=0) ===
     trans_pt = mp.Vector3(0.5 * sx - dpml - 1, 0, 0)
     drop_pt = mp.Vector3(0.5 * sx - dpml - 1, ring_center_y, 0)
 
-    # === シミュレーション定義 ===
+    # === Simulation definition ===
     sim = mp.Simulation(
         cell_size=cell,
         geometry=geometry,
@@ -72,13 +72,13 @@ def main():
         dimensions=3,
     )
 
-    # === フラックスモニター ===
+    # === Flux monitors ===
     trans_flux = sim.add_flux(fcen, df, nfreq,
         mp.FluxRegion(center=trans_pt, size=mp.Vector3(0, w, h)))
     drop_flux = sim.add_flux(fcen, df, nfreq,
         mp.FluxRegion(center=drop_pt, size=mp.Vector3(0, w, h)))
 
-    # === 実行 ===
+    # === Run simulation ===
     sim.use_output_directory()
     sim.run(
         mp.at_beginning(mp.output_epsilon),
@@ -86,13 +86,13 @@ def main():
         until_after_sources=1000
     )
 
-    # === スペクトル取得 ===
+    # === Retrieve spectrum ===
     flux_freqs = mp.get_flux_freqs(trans_flux)
     trans_data = mp.get_fluxes(trans_flux)
     drop_data = mp.get_fluxes(drop_flux)
     wavelengths = [1 / f for f in flux_freqs]
 
-    # === スペクトルプロット ===
+    # === Plot transmission/drop spectrum ===
     plt.figure()
     plt.plot(wavelengths, trans_data, label="Transmission")
     plt.plot(wavelengths, drop_data, label="Drop")
@@ -105,9 +105,9 @@ def main():
     plt.tight_layout()
     plt.show()
 
-    # === Ez場 可視化（z=0平面で2D断面） ===
+    # === Ez field visualization (2D slice at z = 0) ===
     ez_center = mp.Vector3(0, ring_center_y, 0)
-    ez_size = mp.Vector3(sx, sy, 0)  # 2Dスライス（z方向厚み0）
+    ez_size = mp.Vector3(sx, sy, 0)  # 2D slice (thickness 0 in z)
     ez_data = sim.get_array(center=ez_center, size=ez_size, component=mp.Ez)
 
     extent = [-0.5 * sx, 0.5 * sx,
