@@ -4,25 +4,25 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    # === パラメータ ===
-    n = 3.4           # 基本屈折率
-    w = 0.5           # 導波路幅 [μm]
-    h = 0.22          # 導波路高さ [μm]
-    dpml = 2.0        # PML厚さ [μm]
+    # === Parameters ===
+    n = 3.4           # Base refractive index
+    w = 0.5           # Waveguide width [μm]
+    h = 0.22          # Waveguide height [μm]
+    dpml = 2.0        # PML thickness [μm]
     sx = 10.0 + 2*dpml
     sy = 2.0 + 2*dpml
     sz = 2.0 + 2*dpml
     cell = mp.Vector3(sx, sy, sz)
 
-    # === 非線形媒質定義 ===
+    # === Define nonlinear material ===
     class Chi2Material(mp.Medium):
         def __init__(self, index):
             super().__init__(index=index)
-            self.chi2 = 1.0  # 相対値（物理単位ではない）
+            self.chi2 = 1.0  # Relative value (not physical units)
 
     nonlinear_medium = Chi2Material(index=n)
 
-    # === ジオメトリ ===
+    # === Geometry ===
     geometry = [
         mp.Block(
             size=mp.Vector3(mp.inf, w, h),
@@ -31,7 +31,7 @@ def main():
         )
     ]
 
-    # === 光源設定 ===
+    # === Source settings ===
     fcen = 0.64
     df = 0.1
     nfreq = 100
@@ -47,11 +47,11 @@ def main():
         eig_match_freq=True
     )]
 
-    # === モニター位置 ===
-    input_pt = source_pos + mp.Vector3(1.0, 0, 0)  # 光源直後
+    # === Monitor positions ===
+    input_pt = source_pos + mp.Vector3(1.0, 0, 0)  # Just after the source
     trans_pt = mp.Vector3(0.5 * sx - dpml - 1, 0, 0)
 
-    # === シミュレーション設定 ===
+    # === Simulation settings ===
     sim = mp.Simulation(
         cell_size=cell,
         geometry=geometry,
@@ -61,7 +61,7 @@ def main():
         dimensions=3,
     )
 
-    # === フラックスモニター設定 ===
+    # === Set flux monitors ===
     input_flux = sim.add_flux(fcen, df, nfreq,
         mp.FluxRegion(center=input_pt, size=mp.Vector3(0, w, h)))
     trans_flux = sim.add_flux(fcen, df, nfreq,
@@ -69,14 +69,14 @@ def main():
     shg_flux = sim.add_flux(2*fcen, df, nfreq,
         mp.FluxRegion(center=trans_pt, size=mp.Vector3(0, w, h)))
 
-    # === 実行 ===
+    # === Run the simulation ===
     sim.use_output_directory()
     sim.run(
         mp.at_beginning(mp.output_epsilon),
         until_after_sources=500
     )
 
-    # === 結果取得 ===
+    # === Retrieve results ===
     freqs = mp.get_flux_freqs(trans_flux)
     wl = 1 / np.array(freqs)
 
@@ -84,11 +84,11 @@ def main():
     trans_data = mp.get_fluxes(trans_flux)
     shg_data = mp.get_fluxes(shg_flux)
 
-    # === 効率の計算 ===
+    # === Compute efficiency ===
     trans_ratio = np.array(trans_data) / np.array(input_data)
     shg_efficiency = np.array(shg_data) / np.array(input_data)
 
-    # === プロット ===
+    # === Plot ===
     plt.figure()
     plt.plot(wl, trans_ratio, label="Transmission (Fundamental)")
     plt.plot(wl / 2, shg_efficiency, label="SHG Efficiency")
@@ -101,7 +101,7 @@ def main():
     plt.tight_layout()
     plt.show()
 
-    # === Ez電場分布可視化 ===
+    # === Visualize Ez field distribution ===
     ez_data = sim.get_array(center=mp.Vector3(z=0), size=mp.Vector3(sx, sy, 0), component=mp.Ez)
     extent = [-0.5 * sx, 0.5 * sx, -0.5 * sy, 0.5 * sy]
 
@@ -120,5 +120,4 @@ if __name__ == "__main__":
     wl, shg_efficiency = main()
     target_lambda = 1.55
     idx = (np.abs(wl - target_lambda)).argmin()
-    print(f"λ = {wl[idx]:.4f} μm における SHG 効率: {shg_efficiency[idx]:.6e}")
-
+    print(f"SHG efficiency at λ = {wl[idx]:.4f} μm: {shg_efficiency[idx]:.6e}")
